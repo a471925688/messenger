@@ -1,0 +1,159 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">廣告列表</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>廣告列表</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            類型：
+            <select id="banner-search-key" lay-filter="typeId">
+                <option value="">-請選擇-</option>
+                <% for(bannerType in bannerTypes) { %>
+                <option value="${bannerType.typeId}">${bannerType.name}</option>
+                <% }%>
+            </select>&emsp;
+
+<!--            <button id="banner-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>-->
+            <button id="banner-btn-add" class="layui-btn icon-btn" ><i
+                    class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+        <table class="layui-table" id="banner-table" lay-filter="banner-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="banner-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+
+<script>
+    layui.use(['form', 'table', 'util', 'admin', 'element'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+
+        form.render('select');
+        // 渲染表格
+        table.render({
+            elem: '#banner-table',
+            url: 'banner/banner/list',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'typeId', sort: true, title: '類型', templet: function (d) {
+                        return    $("option[value="+d.typeId+"]").text();
+                    }},
+                {field: 'title', sort: true, title: '標題'},
+                {field: 'imageUrl', sort: true, title: '圖片', templet: function (d) {
+                        var html = "";
+                        if(d.imageUrl){
+                            html = " <div><img src='"+d.imageUrl+"'></div>"
+                        }
+                        return html;
+                    }},
+                {field: 'content', sort: true, title: '內容'},
+                {field: 'url', sort: true, title: '跳轉地址', templet:'<div><a href="{{d.url}}">{{d.url}}</a></div>'},
+                {field: 'sort', sort: true, title: '排序'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '創建時間'
+                },
+                {align: 'center', toolbar: '#banner-table-bar', title: '操作'}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        $('#banner-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(banner-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') { // 修改
+                showEditModel(data);
+            } else if (layEvent === 'del') { // 重置密码
+                layer.confirm('確定刪除該廣告嗎？', function (i) {
+                    layer.close(i);
+                    layer.load(2);
+                    $.post('banner/banner/del', {
+                        id:data.id
+                    }, function (data) {
+                        layer.closeAll('loading');
+                        if (!data.code) {
+                            layer.msg(data.msg, {icon: 1});
+                            table.reload('banner-table', {});
+                        } else {
+                            layer.msg(data.msg, {icon: 2});
+                        }
+                    });
+                });
+            }
+        });
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = data ? '修改廣告' : '添加廣告';
+            admin.putTempData('t_banner', data);
+            admin.popupCenter({
+                title: title,
+                path: 'banner/banner/editForm',
+                finish: function () {
+                    table.reload('banner-table', {});
+                }
+            });
+        };
+        form.on('select(typeId)', function(data){
+            var param = {
+                typeId:data.value
+            }
+            table.reload('banner-table', {where:param});
+        })
+        // 搜索按钮点击事件
+        // $('#banner-btn-search').click(function () {
+        //     var key = $('#banner-search-key').val();
+        //     var value = $('#banner-search-value').val();
+        //     var param = {
+        //         bannerId:null,
+        //         bannername:null,
+        //         nickName:null,
+        //         phone:null
+        //     };
+        //     param[key] = value;
+        //     console.log(param);
+        //     table.reload('banner-table', {where:param});
+        // });
+
+        // 修改banner状态
+        form.on('switch(banner-tpl-state)', function (obj) {
+            layer.load(2);
+            $.post('banner/banner/updateState', {
+                bannerId: obj.elem.value,
+                state: obj.elem.checked ? 0 : 1
+            }, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    //table.reload('table-banner', {});
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            });
+        });
+    });
+</script>

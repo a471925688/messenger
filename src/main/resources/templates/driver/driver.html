@@ -1,0 +1,153 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">司機管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>司機管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="driver-search-key">
+                <option value="">-請選擇-</option>
+                <option value="userId">ID</option>
+                <option value="username">賬號</option>
+                <option value="nickName">姓名</option>
+                <option value="phone">手機號</option>
+            </select>&emsp;
+            <input id="driver-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="driver-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="driver-btn-add" class="layui-btn icon-btn" lay-tips="新司機密码为123456"><i
+                    class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+
+        <table class="layui-table" id="driver-table" lay-filter="driver-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="driver-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-xs" lay-event="reset">重置密碼</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="driver-tpl-state">
+    <input type="checkbox" lay-filter="driver-tpl-state" value="{{d.userId}}" lay-skin="switch" lay-text="正常|鎖定"
+           {{d.state==0?'checked':''}}/>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'util', 'admin', 'element'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+
+        form.render('select');
+
+        // 渲染表格
+        table.render({
+            elem: '#driver-table',
+            url: 'driver/driver/list',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'username', sort: true, title: '賬號'},
+                {field: 'nickName', sort: true, title: '姓名'},
+                {field: 'phone', sort: true, title: '手機號'},
+                {field: 'sex', sort: true, title: '性別'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '創建時間'
+                },
+
+                {field: 'state', sort: true, templet: '#driver-tpl-state', title: '狀態'},
+                {align: 'center',minWidth:200, toolbar: '#driver-table-bar', title: '操作'}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        $('#driver-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(driver-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            switch (layEvent) {
+                case 'edit':{
+                    showEditModel(data);
+                    break;
+                }
+
+                case 'reset':{
+                    layer.confirm('確定充值此司機密碼嗎？', function (i) {
+                        layer.close(i);
+                        layer.load(2);
+                        admin.req('system/user/restPsw',{userId: obj.data.userId},function (data) {
+                            layer.closeAll('loading');
+                            if (data.code == 200) {
+                                layer.msg(data.msg, {icon: 1});
+                            } else {
+                                layer.msg(data.msg, {icon: 2});
+                            }
+                        })
+                    });
+                    break;
+                }
+            }
+        });
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = data ? '修改司機' : '添加司機';
+            admin.putTempData('t_driver', data);
+            admin.popupCenter({
+                title: title,
+                path: 'driver/driver/editForm',
+                finish: function () {
+                    table.reload('driver-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#driver-btn-search').click(function () {
+            var key = $('#driver-search-key').val();
+            var value = $('#driver-search-value').val();
+
+            var param = {
+                userId:null,
+                username:null,
+                nickName:null,
+                phone:null
+            };
+            param[key] = value;
+            console.log(param);
+            table.reload('driver-table', {where:param});
+        });
+
+        // 修改user状态
+        form.on('switch(driver-tpl-state)', function (obj) {
+            layer.load(2);
+            admin.req('system/user/updateState',{userId: obj.elem.value, state: obj.elem.checked ? 0 : 1},function (data) {
+                layer.closeAll('loading');
+                if (data.code==200) {
+                    layer.msg(data.msg, {icon: 1});
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            })
+        });
+    });
+</script>

@@ -1,0 +1,23 @@
+<div class="layui-col-lg8 layui-col-md7" style="max-height:600px;width:100%;overflow: auto">
+    <div class="layui-card">
+        <div class="layui-card-body" >
+            <ul class="layui-timeline">
+                <% for(orderRecord in orderRecords) { %>
+                    <li class="layui-timeline-item">
+                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                        <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">
+                                <small>${orderRecord.title}</small>&emsp;<span class="layui-badge-rim">${orderRecord.createTime}</span>
+                            </h3>
+                            <ul>
+                                <li>${orderRecord.tbExplain}</li>
+                                <li>狀態:   <label style="color: green">${orderRecord.statusStr}</label></li>
+                                <li>操作員: <label style="color: #0000FF">${orderRecord.operatorName}</label></li>
+                            </ul>
+                        </div>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</div>

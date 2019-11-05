@@ -1,0 +1,242 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">待領取列表</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>待領取列表</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            用户：
+            <input id="order_unclaimed-edt-account" class="layui-input search-input" type="text" placeholder="请输入账号"/>&emsp;
+            日期：
+            <input id="order_unclaimed-edt-date" class="layui-input search-input date-icon" type="text" placeholder="请选择日期范围"
+                   style="width: 195px;"/>&emsp;
+            <button id="order_unclaimed-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <!--<button id="order_unclaimed-btn-add" class="layui-btn icon-btn"><i-->
+                    <!--class="layui-icon">&#xe654;</i>添加-->
+            <!--</button>-->
+        </div>
+
+        <table class="layui-table" id="order_unclaimed-table" lay-filter="order_unclaimed-table"></table>
+    </div>
+</div>
+<!-- 表格工具列 -->
+<script type="text/html" id="order_unclaimed-table-toolbar">
+    <a class="layui-btn" lay-event="add_locus_all">添加軌跡</a>
+</script>
+<script type="text/html" id="order_receive">
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="width: 65px;">提貨碼</label>
+        <div class="layui-input-inline">
+            <input name="pickUpCode" placeholder="请输入提貨碼" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+</script>
+<!-- 表格操作列 -->
+<script type="text/html" id="order_unclaimed-table-bar">
+    <a class="layui-btn  layui-btn-xs" lay-event="add_locus">添加軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="receive">領取</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="see">查看軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="message">留言
+        {{#  if(d.memberRepliesNum > 0){ }}
+        <div class="radius-info">{{d.memberRepliesNum}}</div>
+        {{#  } else { }}
+
+        {{#  } }}
+    </a>
+<!--    <a class="layui-btn  layui-btn-xs" lay-event="appointment">预约</a>-->
+<!--    <a class="layui-btn  layui-btn-xs" lay-event="appointment">攬件</a>-->
+</script>
+<script>
+    layui.use(['laydate', 'table', 'util', 'admin'], function () {
+        var laydate = layui.laydate;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        // 渲染表格
+        table.render({
+            elem: '#order_unclaimed-table',
+            url: 'order/order/list_unclaimed',
+            page: true,
+            toolbar: '#order_unclaimed-table-toolbar', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cellMinWidth:80,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'username', title: '用户'},
+                {field: 'orderNo', title: '快递单号'},
+                {field: 'recId', title: '地址',hide:true},
+                {field: 'goodsType', title: '类型'},
+                {field: 'goodsWeight', title: '重量'},
+                {field: 'goodsVolume', title: '体积'},
+                {field: 'orderTokenMoney', title: '运费'},
+                // {
+                //     field: 'pickUpStationId', title: '目的地', templet: function (d) {
+                //         return d.receAddres.pickUpStationId?d.receAddres.pickUpStation.pickUpStationName:"";
+                //     }
+                // },
+                // {
+                //     field: 'pickUpStationId', title: '收件地址', templet: function (d) {
+                //         return d.pickUpStationId?"客户自提":d.receAddres.recDetailedAddr;
+                //     }
+                // },
+                // {field: 'orderAppointment', title: '预约时间', templet: function (d) {
+                //         return d.orderAppointment?d.orderAppointment:"<span style='color: #4CAF50'>未预约</span>";
+                //     }
+                // },
+                // {field: 'pickUpCode', title: '提货码'},
+                {
+                    field: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                {align: 'center',minWidth:260, toolbar: '#order_unclaimed-table-bar', title: '操作'}
+            ]]
+        });
+        table.on('toolbar(order_unclaimed-table)', function (obj) {
+            console.log("触发了")
+            var checkStatus = table.checkStatus(obj.config.id)
+                ,data = checkStatus.data; //获取选中的数据
+            switch(obj.event){
+                case 'add_locus_all':
+                    if(data.length === 0){
+                        layer.msg('请至少选择一行');
+                    } else {
+                        var orderIds = [];
+                        for(var i = 0;i<data.length;i++){
+                            orderIds.push(data[i].orderId)
+                        }
+                        showAddLocusModel(orderIds);
+                    }
+                    break;
+            };
+        });
+
+        // 工具条点击事件
+        table.on('tool(order_unclaimed-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            console.log("点击了")
+            switch (layEvent) {
+                case 'edit':{
+                    showEditModel(data);
+                    break;
+                }
+                case 'add_locus':{
+                    var orderIds = [];
+                    orderIds.push(data.orderId);
+                    showAddLocusModel(orderIds);
+                    break;
+                }
+                case 'receive':{
+                    layer.confirm($('#order_receive').html(), function (i) {
+                        var param  = {
+                            orderId:data.orderId,
+                            pickUpCode:$("input[name=pickUpCode]").val()
+                        }
+                        console.log(param);
+                        layer.load(2);
+                        admin.req('order/order/receive',param,function (data) {
+                            layer.closeAll('loading');
+                            if (!data.code) {
+                                layer.close(i);
+                                layer.msg(data.msg, {icon: 1});
+                            } else {
+                                layer.msg(data.msg, {icon: 2});
+                            }
+                        })
+                    });
+                    break;
+                }
+                case 'see':{
+                    admin.putTempData('t_orderRecord', data.orderId);
+                    admin.popupCenter({
+                        area:'650px',
+                        title: "物流信息",
+                        path: 'order/orderRecord?orderId='+data.orderId,
+                        finish: function () {
+
+                        }
+                    });
+                    break;
+                }
+                case 'message':{
+                    var user = {
+                        nickName:$("#userNickName").text(),
+                        avatar:$("#userAvatar").attr("src"),
+                    }
+                    card.open(data,user);
+                    console.log(  obj.tr.find(".radius-info").remove())
+                    break;
+                }
+
+            }
+        });
+
+        // // 添加按钮点击事件
+        // $('#order_unclaimed-btn-add').click(function () {
+        //     showEditModel();
+        // });
+
+
+        // // 显示表单弹窗
+        // var showEditModel = function (data) {
+        //     var title = data ? '修改会员' : '添加会员';
+        //     admin.putTempData('t_order_unclaimed', data);
+        //     admin.popupCenter({
+        //         title: title,
+        //         path: 'order/order/editForm',
+        //         finish: function () {
+        //             table.reload('order_unclaimed-table', {});
+        //         }
+        //     });
+        // };
+        // 显示表单弹窗
+        var showAddLocusModel = function (data) {
+            var title = '添加軌跡';
+            admin.putTempData('t_order_locus', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/orderRecord/locusForm',
+                finish: function () {
+                    table.reload('order_unclaimed-table', {});
+                }
+            });
+        };
+
+        // 显示表单弹窗
+        var showReceiveModel = function (data) {
+            var title = '領取包裹';
+            admin.popupCenter({
+                title: title,
+                path: 'order/order/receive',
+                finish: function () {
+                    table.reload('order_unclaimed-table', {});
+                }
+            });
+        };
+
+        // 时间范围
+        laydate.render({
+            elem: '#order_unclaimed-edt-date',
+            type: 'date',
+            range: true,
+            theme: 'molv'
+        });
+
+        // 搜索按钮点击事件
+        $('#order_unclaimed-btn-search').click(function () {
+            var searchDate = $('#order_unclaimed-edt-date').val().split(' - ');
+            var searchAccount = $('#order_unclaimed-edt-account').val();
+            table.reload('order_unclaimed-table', {
+                where: {
+                    startDate: searchDate[0],
+                    endDate: searchDate[1],
+                    username: searchAccount
+                }
+            });
+        });
+    });
+</script>

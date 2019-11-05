@@ -1,0 +1,110 @@
+<style>
+    .layui-form-item .layui-input-inline {
+        float: left;
+        width: 265px;
+        margin-right: 10px;
+    }
+</style>
+<!-- user表单弹窗 -->
+<form id="banner-form" lay-filter="banner-form" class="layui-form model-form">
+    <input type="hidden" name="id" >
+    <input type="hidden" id="imgRatio">
+    <div class="layui-form-item">
+        <label class="layui-form-label">類型</label>
+        <div class="layui-input-inline">
+            <select name="typeId"  lay-filter="bannerType" >
+                <% for(bannerType in bannerTypes) { %>
+                <option value="${bannerType.typeId}" imgratio="${bannerType.imgRatio}"  selected>${bannerType.name}</option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">標題</label>
+        <div class="layui-input-inline">
+            <input name="title" placeholder="请输入名称" type="text" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline">
+            <input name="sort" placeholder="请输入排序" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">跳轉地址</label>
+        <div class="layui-input-inline">
+            <input name="url" placeholder="请输入跳轉地址" type="text" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">內容</label>
+        <div class="layui-input-inline">
+            <textarea placeholder="请输入內容" name="content" id="advertisingTypeDescribe" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item" >
+        <label class="layui-form-label"><button type="button" class="layui-btn layui-btn-sm lang"   onclick="uploadic.click()">上传圖片</button></label>
+        <div class="layui-input-inline">
+            <div class="layui-upload-list" >
+                <div class="layui-upload-drag" id="uploadic" style="height: 180px;width: 204px;">
+                    <label id="detailsimgdescribe">
+                    </label>
+                </div>
+                <input type="hidden" name="imageName" id="imagePath" >
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="banner-form-submit" lay-submit>保存</button>
+    </div>
+
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'upload'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        // var formSelects = layui.formSelects;
+        var upload = layui.upload;
+        form.render('select');
+
+        var url = 'banner/banner/add';
+        // 回显user数据
+        var banner = admin.getTempData('t_banner');
+        console.log(banner)
+        if (banner) {
+            url = 'banner/banner/update';
+            form.val('banner-form', banner);
+            Upload.showImgHandle("uploadic","image/"+banner.imageName);
+        }
+        form.on('select(bannerType)', function(data){
+            $("#imgRatio").val($(data.elem).find("option[value="+data.value+"]").attr("imgratio"))
+        })
+        Upload.uploadImgCropper(upload, "uploadic", "file/uploadImages", {}, "jpg|gif|bmp|png|jpeg",$("select[name=typeId]"));
+
+        // 表单提交事件
+        form.on('submit(banner-form-submit)', function (data) {
+            var param = data.field;
+            layer.load(2);
+            // param.orderIds = orderIds;
+            // console.log(param)
+            $.post(url, param, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

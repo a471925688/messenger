@@ -1,0 +1,95 @@
+<!-- user表单弹窗 -->
+<form id="order-form" lay-filter="order-form" class="layui-form model-form">
+    <input name="orderId" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">標籤號</label>
+        <div class="layui-input-inline">
+            <select name="labelNo"   xm-select-radio  xm-select="no" xm-select-search lay-verify="required">
+                <% for(label in labels) { %>
+                <option value="${label.no}">${label.no}</option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">快遞單號</label>
+        <div class="layui-input-inline">
+            <input name="orderNo" placeholder="请输入快遞單號" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址標識</label>
+        <div class="layui-input-inline">
+            <input name="recId" placeholder="请输入收货地址id"  type="text" class="layui-input" lay-verify="required"
+                   required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">類型</label>
+        <div class="layui-input-inline">
+            <input name="goodsType" placeholder="请输入货物类型" type="text" class="layui-input"  lay-verify="required|text"
+                   required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">重量</label>
+        <div class="layui-input-inline">
+            <input name="goodsWeight" placeholder="请输入货物重量" type="number" class="layui-input" value="0" lay-verify="required|number"
+                   required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">體積</label>
+        <div class="layui-input-inline">
+            <input name="goodsVolume" placeholder="請輸入货物體積" type="number" class="layui-input"  lay-verify="required|number"
+                   required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">運費</label>
+        <div class="layui-input-inline">
+            <input name="orderTokenMoney" placeholder="請輸入货物運費" type="number" class="layui-input"  lay-verify="required|number"
+                   required/>
+        </div>
+    </div>
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="order-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+
+
+        // $("input[name=recId]").blur(function () {
+        //     if($(this).val()){
+        //         admin.req("",{},function (result) {
+        //             if(!result.data)
+        //                 layer.msg("收货地址错误（id不存在）", {icon: 2});
+        //         })
+        //     }
+        // })
+
+        var url = 'order/order/add';
+        // 回显user数据
+        // var user = admin.getTempData('t_order');
+        // if (user) {
+        //     url = 'order/order/edit';
+        //     form.val('order-form', user);
+        // }
+
+        // 表单提交事件
+        form.on('submit(order-form-submit)', function (data) {
+            layer.load(2);
+            admin.req(url,data.field,null,null,true)
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,136 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">站点管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>站点管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="pickUpStation-search-key">
+                <option value="">-请选择-</option>
+                <option value="userId">ID</option>
+                <option value="username">账号</option>
+                <option value="nickName">站点名</option>
+                <option value="phone">手机号</option>
+            </select>&emsp;
+            <input id="pickUpStation-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="pickUpStation-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="pickUpStation-btn-add" class="layui-btn icon-btn" ><i
+                    class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+
+        <table class="layui-table" id="pickUpStation-table" lay-filter="pickUpStation-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="pickUpStation-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+<!--    <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>-->
+</script>
+
+
+<script>
+    layui.use(['form', 'table', 'util', 'admin', 'element'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+
+        form.render('select');
+
+        // 渲染表格
+        table.render({
+            elem: '#pickUpStation-table',
+            url: 'site/pickUpStation/list',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'pickUpStationName', sort: true, title: '名称'},
+                {field: 'pickUpStationPhone', sort: true, title: '电话'},
+                {field: 'pickUpStationAddr', sort: true, title: '地址'},
+                {field: 'pointx', sort: true, title: '经度'},
+                {field: 'pointy', sort: true, title: '维度'},
+                {field: 'recRemarks', sort: true, title: '备注'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+
+                {align: 'center',toolbar: '#pickUpStation-table-bar', title: '操作'}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        $('#pickUpStation-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(pickUpStation-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            switch (layEvent) {
+                case 'edit':{
+                    showEditModel(data);
+                    break;
+                }
+                case 'del':{
+                    layer.confirm('確定刪除該提貨點嗎？', function (i) {
+                        layer.close(i);
+                        layer.load(2);
+                        $.post('site/pickUpStation/del', {
+                            id: obj.data.pickUpStationId
+                        }, function (data) {
+                            layer.closeAll('loading');
+                            if (!data.code) {
+                                layer.msg(data.msg, {icon: 1});
+                            } else {
+                                layer.msg(data.msg, {icon: 2});
+                            }
+                        });
+                    });
+                    break;
+                }
+            }
+        });
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = data ? '修改站点' : '添加站点';
+            admin.putTempData('t_pickUpStation', data);
+            admin.popupCenter({
+                title: title,
+                path: 'site/pickUpStation/editForm',
+                finish: function () {
+                    table.reload('pickUpStation-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#pickUpStation-btn-search').click(function () {
+            var key = $('#pickUpStation-search-key').val();
+            var value = $('#pickUpStation-search-value').val();
+
+            var param = {
+                userId:null,
+                username:null,
+                nickName:null,
+                phone:null
+            };
+            param[key] = value;
+            console.log(param);
+            table.reload('pickUpStation-table', {where:param});
+        });
+
+    });
+</script>

@@ -1,0 +1,327 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">訂單列表</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首頁</a>
+          <a><cite>待出庫列表</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            標籤：
+            <input id="order_stock-edt-label-no" class="layui-input search-input" type="text" placeholder="請輸入標籤號"/>&emsp;
+            用戶：
+            <input id="order_stock-edt-account" class="layui-input search-input" type="text" placeholder="請輸入賬號"/>&emsp;
+            訂單號：
+            <input id="order_stock-edt-no" class="layui-input search-input" type="text" placeholder="請輸入訂單號"/>&emsp;
+            收貨地區：
+            <div class="layui-input-inline" style="min-width: 340px;margin-right: 8px;">
+                <select name="order_stock-edt-place"   xm-select-radio  xm-select="order_stock-edt-place" lay-verify="required"></select>
+            </div>
+             日期：
+            <input id="order_stock-edt-date" class="layui-input search-input date-icon" type="text" placeholder="請選擇日期範圍"
+                   style="width: 195px;"/>&emsp;
+            <button id="order_stock-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="order_stock-btn-add" class="layui-btn icon-btn"><i
+                    class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+
+        <table class="layui-table" id="order_stock-table" lay-filter="order_stock-table"></table>
+    </div>
+</div>
+<!--<div class="order_card">-->
+<!--    <div class="card-title" style="cursor: move;">​</div>-->
+<!--    <span class="layui-layer-setwin"><a class="layui-layer-min" href="javascript:;" style="display: inline-block;"><cite></cite></a><a class="layui-layer-ico layui-layer-max" href="javascript:;"></a><a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a></span>-->
+<!--    <div class="card-body">-->
+<!--        <div class="card-body-main">-->
+<!--            <ul>-->
+<!--                <li>-->
+<!--                    <div >-->
+<!--                        <img class="card-body-main-header-img" src="assets/images/head.png">-->
+<!--                        <cite>管理員<i>2019-06-29 11:36:30</i></cite>-->
+<!--                    </div>-->
+<!--                    <div class="card-body-main-text">-->
+<!--                        <div class="card-body-main-text-content">請問我的快遞到哪了？請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了-->
+<!--                            <div class="card-body-main-text-triangle card-body-main-text-triangle-left"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <div >-->
+<!--                        <img class="card-body-main-header-img float-right" src="assets/images/head.png">-->
+<!--                        <cite class="right"><i>2019-06-29 11:36:30</i>客戶</cite>-->
+<!--                    </div>-->
+<!--                    <div class="card-body-main-text">-->
+<!--                        <div class="card-body-main-text-content float-right card-body-main-text-background-color">了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的-->
+<!--                            <div class="card-body-main-text-triangle"></div>-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <div >-->
+<!--                        <img class="card-body-main-header-img" src="assets/images/head.png">-->
+<!--                        <cite>管理員<i>2019-06-29 11:36:30</i></cite>-->
+<!--                    </div>-->
+<!--                    <div class="card-body-main-text">-->
+<!--                        <div class="card-body-main-text-content">請問我的快遞到哪了？請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了-->
+<!--                            <div class="card-body-main-text-triangle card-body-main-text-triangle-left"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                </li>-->
+
+<!--                <li>-->
+<!--                    <div >-->
+<!--                        <img class="card-body-main-header-img" src="assets/images/head.png">-->
+<!--                        <cite>管理員<i>2019-06-29 11:36:30</i></cite>-->
+<!--                    </div>-->
+<!--                    <div class="card-body-main-text">-->
+<!--                        <div class="card-body-main-text-content">請問我的快遞到哪了？請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了請問我的快遞到哪了-->
+<!--                            <div class="card-body-main-text-triangle card-body-main-text-triangle-left"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                </li>-->
+
+<!--            </ul>-->
+<!--        </div>-->
+<!--        <div class="card-body_send">-->
+<!--            <textarea style="width: 100%;height:100%;"></textarea>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<!-- 表格工具列 -->
+<script type="text/html" id="order_stock-table-toolbar">
+    <a class="layui-btn" lay-event="add_locus_all">添加軌跡</a>
+    <a class="layui-btn" lay-event="send_all">批量出庫</a>
+</script>
+<!-- 表格操作列 -->
+<script type="text/html" id="order_stock-table-bar">
+    <a class="layui-btn  layui-btn-xs" lay-event="add_locus">添加軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="see">查看軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="send">出庫</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="message">留言
+        {{#  if(d.memberRepliesNum > 0){ }}
+            <div class="radius-info">{{d.memberRepliesNum}}</div>
+        {{#  } else { }}
+
+        {{#  } }}
+    </a>
+<!--    <a class="layui-btn  layui-btn-xs" lay-event="appointment">预约</a>-->
+</script>
+
+
+<script>
+    layui.use(['laydate', 'table', 'util', 'admin','formSelects'], function () {
+        var laydate = layui.laydate;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        var formSelects = layui.formSelects;
+        formSelects.data('order_stock-edt-place', 'server', {
+            url: "place/place/ztreeList.do",
+            linkage: true,
+            linkageWidth: 130
+        });
+
+        // 渲染表格
+        table.render({
+            elem: '#order_stock-table',
+            url: 'order/order/list_stock',
+            page: true,
+            toolbar: '#order_stock-table-toolbar', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cellMinWidth:80,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'labelNo', title: '標籤號'},
+                {field: 'username', title: '用戶名'},
+                {field: 'orderNo', title: '快遞單號'},
+                // {field: 'operatorname', title: '操作员'},
+                {field: 'recId', title: '地址標示',hide:true},
+                {field: 'goodsType', title: '類型'},
+                {field: 'goodsWeight', title: '重量'},
+                {field: 'goodsVolume', title: '體積'},
+                {field: 'orderTokenMoney', title: '運費'},
+                {
+                    field: 'pickUpStationId', title: '收件地址', templet: function (d) {
+                        return d.receAddres.pickUpStationId?d.receAddres.pickUpStation.pickUpStationName+"自提":d.receAddres.place.details+'-'+d.receAddres.recDetailedAddr;
+                    }
+                },
+                // {field: 'orderAppointment', title: '预约时间',sort:true, templet: function (d) {
+                //         return d.orderAppointment?d.orderAppointment:"<span style='color: #4CAF50'>未预约</span>";
+                //     }
+                // },
+                // {field: 'pickUpCode', title: '提货码'},
+                {
+                    field: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '創建時間'
+                },
+                {align: 'center',minWidth:280, toolbar: '#order_stock-table-bar', title: '操作'}
+            ]]
+        });
+        table.on('toolbar(order_stock-table)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id)
+                ,data = checkStatus.data; //获取选中的数据
+            switch(obj.event){
+                case 'add_locus_all':
+                    if(data.length === 0){
+                        layer.msg('請至少選擇一行');
+                    } else {
+                        var orderIds = [];
+                        for(var i = 0;i<data.length;i++){
+                            orderIds.push(data[i].orderId)
+                        }
+                        showAddLocusModel(orderIds);
+                    }
+                    break;
+                case 'send_all':
+                    if(data.length === 0){
+                        layer.msg('請至少選擇一行');
+                    } else {
+                        var orderIds = [];
+                        for(var i = 0;i<data.length;i++){
+                            orderIds.push(data[i].orderId)
+                        }
+                        showSendModel(orderIds);
+                    }
+                    break;
+
+            };
+        });
+
+        // 工具条点击事件
+        table.on('tool(order_stock-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            switch (layEvent) {
+                case 'add_locus':{
+                    var orderIds = [];
+                    orderIds.push(data.orderId);
+                    showAddLocusModel(orderIds);
+                    break;
+                }
+                case 'send':{
+                    var orderIds = [];
+                    orderIds.push(data.orderId);
+                    showSendModel(orderIds);
+                    break;
+                }
+                case 'see':{
+                    admin.putTempData('t_orderRecord', data.orderId);
+                    admin.popupCenter({
+                        area:'100%',
+                        title: "物流信息",
+                        path: 'order/orderRecord?orderId='+data.orderId,
+                        finish: function () {
+
+                        }
+                    });
+                    break;
+                }
+                case 'message':
+                    var user = {
+                        nickName:$("#userNickName").text(),
+                        avatar:$("#userAvatar").attr("src"),
+                    }
+                    card.open(data,user);
+                    console.log(  obj.tr.find(".radius-info").remove())
+                    break;
+            }
+        });
+
+        // 添加按钮点击事件
+        $('#order_stock-btn-add').click(function () {
+            showEditModel();
+        });
+
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = '包裹入庫';
+            admin.putTempData('t_order_stock', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/order/editForm',
+                finish: function () {
+                    table.reload('order_stock-table', {});
+                }
+            });
+        };
+
+        // 显示表单弹窗
+        var showAddLocusModel = function (data) {
+            var title = '添加軌跡';
+            admin.putTempData('t_order_locus', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/orderRecord/locusForm',
+                finish: function () {
+                    table.reload('order_stock-table', {});
+                }
+            });
+        };
+
+        // 显示出庫表单弹窗
+        var showSendModel = function (data) {
+            var title = '訂單出庫';
+            admin.putTempData('t_order_send', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/order/sendForm',
+                finish: function () {
+                    table.reload('order_stock-table', {});
+                }
+            });
+        };
+
+        // // 显示預約表单弹窗
+        // var showAppointmentModel = function (data) {
+        //     var title = '預約派送';
+        //     admin.putTempData('t_order_appointment', data);
+        //     admin.popupCenter({
+        //         title: title,
+        //         path: 'order/order/orderAppointment',
+        //         finish: function () {
+        //             table.reload('order_stock-table', {});
+        //         }
+        //     });
+        // };
+
+
+        // 时间范围
+        laydate.render({
+            elem: '#order_stock-edt-date',
+            type: 'date',
+            range: true,
+            theme: 'molv'
+        });
+
+        // 搜索按钮点击事件
+        $('#order_stock-btn-search').click(function () {
+            var searchDate = $('#order_stock-edt-date').val().split(' - ');
+            var username = $('#order_stock-edt-account').val();
+            var orderNo = $('#order_stock-edt-no').val();
+            var labelNo = $("#order_stock-edt-label-no").val();
+            var placeIds = formSelects.value('order_stock-edt-place', 'val');
+            var param = {
+                startDate: searchDate[0],
+                endDate: searchDate[1],
+                username: username,
+                placeId:  placeIds.length?placeIds[0]:'',
+                orderNo:orderNo,
+                labelNo:labelNo
+            }
+            console.log(param);
+            table.reload('order_stock-table', {
+                where:param
+            });
+        });
+    });
+</script>

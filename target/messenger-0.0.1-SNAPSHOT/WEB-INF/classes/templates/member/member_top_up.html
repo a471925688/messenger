@@ -1,0 +1,52 @@
+<!-- user表单弹窗 -->
+<form id="member-form" lay-filter="member-form" class="layui-form model-form">
+    <input name="userId" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">充值方式</label>
+        <div class="layui-input-inline">
+            <select name="rechargeMode" xm-select="roleId" xm-select-radio lay-verify="required">
+                <option value="1">銀行轉賬</option>
+                <option value="2">現金支付</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">充值數量</label>
+        <div class="layui-input-inline">
+            <input name="rechargeAmount" placeholder="请输入充值數量" type="number" class="layui-input" maxlength="20"
+                   lay-verify="required|number" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">備註</label>
+        <div class="layui-input-inline">
+            <textarea name="rechargeComments" placeholder="请输入備註" class="layui-textarea" maxlength="200"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="member-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+
+        form.render('radio');
+        var user = admin.getTempData('t_member');
+        var url = 'member/tokenMoney/addTokenRecord';
+
+        // 表单提交事件
+        form.on('submit(member-form-submit)', function (data) {
+           var param = data.field;
+            param.userId = user.userId;
+            layer.load(2);
+            admin.req(url,param,null,null,true)
+            return false;
+        });
+    });
+</script>

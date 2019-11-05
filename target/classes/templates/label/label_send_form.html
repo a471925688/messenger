@@ -1,0 +1,60 @@
+<!-- user表单弹窗 -->
+<form id="label-send-form" lay-filter="label-send-form" class="layui-form model-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">運貨司機</label>
+        <div class="layui-input-inline">
+            <select name="driverId"   xm-select-radio  xm-select="driverId" lay-verify="required">
+                <% for(driver in drivers) { %>
+                <option value="${driver.userId}">${driver.nickName}</option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">目的地</label>
+        <div class="layui-input-inline">
+            <select name="pickUpStationId"   xm-select-radio  xm-select="pickUpStationId" lay-verify="required">
+                <% for(pickUpStation in pickUpStations) { %>
+                <option value="${pickUpStation.pickUpStationId}">${pickUpStation.pickUpStationName}</option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="label-send-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+
+        form.render('radio');
+
+        var url = 'label/label/send';
+
+        var no = admin.getTempData('t_label_send');
+        // 表单提交事件
+        form.on('submit(label-send-form-submit)', function (data) {
+            var param = data.field;
+            layer.load(2);
+            param.no = no;
+            console.log(param)
+            $.post(url, param, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

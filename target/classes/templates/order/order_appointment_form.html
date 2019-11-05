@@ -1,0 +1,52 @@
+<!-- user表单弹窗 -->
+<form id="order-appointment-form" lay-filter="order-appointment-form" class="layui-form model-form">
+    <input name="orderId" type="hidden">
+    <div class="layui-form-item">
+        <label class="layui-form-label">預約時間</label>
+        <div class="layui-input-inline">
+            <input id="order_appointment_date" name="orderAppointment" class="layui-input search-input date-icon" type="text" placeholder="請選擇時間"
+                   style="width: 195px;"/>&emsp;
+        </div>
+        <div class="layui-form-item model-form-footer">
+            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+            <button class="layui-btn" lay-filter="order-appointment-form-submit" lay-submit>保存</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'laydate'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        form.render('radio');
+
+        // 时间范围
+        laydate.render({
+            elem: '#order_appointment_date',
+            type: 'datetime',
+        });
+        var url = 'order/order/appointment';
+
+        var order = admin.getTempData('t_order_appointment');
+        // 表单提交事件
+        form.on('submit(order-appointment-form-submit)', function (data) {
+            var param = data.field;
+            layer.load(2);
+            param.orderId = order.orderId;
+            console.log(param)
+            $.post(url, param, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

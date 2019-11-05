@@ -1,0 +1,25 @@
+<script type="text/javascript" src="${ctxPath }/assets/libs/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/q.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/chartJs/Chart.min.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/cropper/cropper.min.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/zTree/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="${ctxPath }/module/card/card.js"></script>
+<script type="text/javascript" src="${ctxPath }/module/uploadUtil.js"></script>
+<script type="text/javascript" src="${ctxPath }/module/cropper/move.js"></script>
+<script type="text/javascript" src="${ctxPath }/module/cropper/publishImg.js"></script>
+<script type="text/javascript" src="${ctxPath }/module/webSocket/webSockt.js"></script>
+<script>
+    layui.config({
+        base: '${ctxPath}/module/'
+    }).extend({
+        formSelects: 'formSelects/formSelects-v4',
+        treetable: 'treetable-lay/treetable',
+        tableSelect:"tableSelect/tableSelect",
+        cropper:"cropper/cropper/cropper",
+        croppers:"cropper/croppers"
+    }).use(['admin'], function () {
+        var admin = layui.admin;
+
+    });
+</script>

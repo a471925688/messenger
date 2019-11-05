@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Messenger</title>
+        <% include("../layout/cssPart.html"){} %>
+    </head>
+    <style>
+        .title_font{
+            font-size: initial;
+            font-weight: 600;
+            color: black;
+        }
+        .content_text span{
+            margin-top: 12px;
+            display: inline-block;
+            font-size: 6px;
+            letter-spacing: 2px;
+        }
+    </style>
+    <body>
+        <div class="layui-container">
+            <div class="layui-row">
+                <p class="title_font">收費價格表</p>
+                <table class="layui-table">
+                    <colgroup>
+                        <col >
+                        <col >
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>區域</th>
+                        <th>首重價格(0.5kg)</th>
+                        <th>續重價格</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>路氹提貨點</td>
+                        <td>10</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>氹仔提貨點</td>
+                        <td>11</td>
+                        <td>11</td>
+                    </tr>
+                    <tr>
+                        <td>市中心提貨點</td>
+                        <td>12</td>
+                        <td>12</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="layui-row content_text">
+                <p class="title_font">信差的運輸運算方法：</p>
+                <span >
+                    體積重量是一種反應包裹密度的計算方式。低密度的包裹，比較其實實際量，佔用的空間通常比較大。計算出來的體積重量會與其實際重量比較，取較重者為計費重量，用以計算運費。
+                </span>
+                <span >
+                    根據城市慣例，體積重量(kg)的計算方式為：長度(cm) x 宽度(cm) x 高度(cm)÷6000(計算方法都是按地區及市場慣例決定，當中可能各有差異。)
+                </span>
+                <span >
+                    貨件重量計算方式為實際重量或體積重量，取較重者。
+                </span>
+                <span >
+                    特快專遞貨品的寄遞以第一個0.5KG為首重。
+                </span>
+                <span >
+                    續重：每增加一個0.5KG為一個續重。
+                </span>
+            </div>
+        </div>
+
+    </body>
+</html>

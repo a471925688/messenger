@@ -1,0 +1,118 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">已出庫袋子</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>已出庫袋子</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            袋號：
+            <input id="labelSend-search-no" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="labelSend-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+        </div>
+
+        <table class="layui-table" id="labelSend-table" lay-filter="labelSend-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="labelSend-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="print">打印</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<script>
+    WebSocketUtil.init({openUrl:'ws://127.0.0.1:50000/',eroorMsg:'打印未开启'});
+
+    layui.use(['form', 'table', 'util', 'admin', 'element'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+
+        form.render('select');
+
+        // 渲染表格
+        table.render({
+            elem: '#labelSend-table',
+            url: 'label/label/list_send',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'no', sort: true, title: '袋號'},
+                {field: 'remarks', sort: true, title: '备注'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                {align: 'center',toolbar: '#labelSend-table-bar', title: '操作'}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        // $('#labelSend-btn-add').click(function () {
+        //     showEditModel();
+        // });
+
+        // 工具条点击事件
+        table.on('tool(labelSend-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            switch (layEvent) {
+                case 'print':{
+                    WebSocketUtil.send(data.no);
+                    layer.msg('操作成功', {icon: 1});
+                    break;
+                }
+                case 'del':{
+                    layer.confirm('確定刪除該袋子嗎？', function (i) {
+                        layer.close(i);
+                        layer.load(2);
+                        $.post('label/label/del', {
+                            id: obj.data.no
+                        }, function (data) {
+                            layer.closeAll('loading');
+                            if (!data.code) {
+                                table.reload('labelSend-table', {});
+                                layer.msg(data.msg, {icon: 1});
+                            } else {
+                                layer.msg(data.msg, {icon: 2});
+                            }
+                        });
+                    });
+                    break;
+                }
+            }
+        });
+
+        // 显示表单弹窗
+        // var showEditModel = function (data) {
+        //     var title = data ? '修改袋子' : '添加袋子';
+        //     admin.putTempData('t_labelSend', data);
+        //     admin.popupCenter({
+        //         title: title,
+        //         path: 'label/label/editForm',
+        //         finish: function () {
+        //             table.reload('labelSend-table', {});
+        //         }
+        //     });
+        // };
+
+        // 搜索按钮点击事件
+        $('#labelSend-btn-search').click(function () {
+            var no = $('#labelSend-search-no').val();
+            var param = {
+                no:no
+            }
+            table.reload('labelSend-table', {where:param});
+        });
+
+    });
+</script>

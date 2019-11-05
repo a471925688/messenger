@@ -1,0 +1,81 @@
+<!-- user表单弹窗 -->
+<form id="pickUpStation-form" lay-filter="pickUpStation-form" class="layui-form model-form">
+    <input name="pickUpStationId" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">店名</label>
+        <div class="layui-input-inline">
+            <input name="pickUpStationName" placeholder="请输入店名" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-inline">
+            <input name="pickUpStationPhone" placeholder="请输入电话号码" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-inline">
+            <input name="pickUpStationAddr" placeholder="请输入地址信息" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">经度</label>
+        <div class="layui-input-inline">
+            <input name="pointx" placeholder="请输入经度" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">维度</label>
+        <div class="layui-input-inline">
+            <input name="pointy" placeholder="请输入维度" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <textarea name="recRemarks" placeholder="请输入备注信息" class="layui-textarea" maxlength="200"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="pickUpStation-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form',], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+
+        var url = 'site/pickUpStation/add';
+        // 回显user数据
+        var user = admin.getTempData('t_pickUpStation');
+        if (user) {
+            url = 'site/pickUpStation/edit';
+            form.val('pickUpStation-form', user);
+            var rds = new Array();
+        }
+
+        // 表单提交事件
+        form.on('submit(pickUpStation-form-submit)', function (data) {
+            layer.load(2);
+            $.post(url, data.field, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

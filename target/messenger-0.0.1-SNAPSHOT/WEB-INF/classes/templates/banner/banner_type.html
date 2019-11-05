@@ -1,0 +1,128 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">類型列表</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>類型列表</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="banner-type-search-key">
+                <option value="">-请选择-</option>
+                <option value="typeId">ID</option>
+                <option value="name">名稱</option>
+            </select>&emsp;
+            <input id="banner-type-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="banner-type-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="banner-type-btn-add" class="layui-btn icon-btn" ><i
+                    class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+
+        <table class="layui-table" id="banner-type-table" lay-filter="banner-type-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="banner-type-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+</script>
+
+
+
+<script>
+    layui.use(['form', 'table', 'util', 'admin', 'element'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+
+        form.render('select');
+
+        // 渲染表格
+        table.render({
+            elem: '#banner-type-table',
+            url: 'banner/bannerType/list',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'name', sort: true, title: '名稱'},
+                {field: 'maxNumber', sort: true, title: '最大條數'},
+                {field: 'imgRatio', sort: true, title: '圖片比例'},
+                {field: 'explanation', sort: true, title: '說明'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '創建時間'
+                },
+                {align: 'center', toolbar: '#banner-type-table-bar', title: '操作'}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        $('#banner-type-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(banner-type-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') { // 修改
+                showEditModel(data);
+            }
+        });
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = data ? '修改類型' : '添加類型';
+            admin.putTempData('t_bannerType', data);
+            admin.popupCenter({
+                title: title,
+                path: 'banner/bannerType/editForm',
+                finish: function () {
+                    table.reload('banner-type-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#banner-type-btn-search').click(function () {
+            var key = $('#banner-type-search-key').val();
+            var value = $('#banner-type-search-value').val();
+            var param = {
+                bannerTypeId:null,
+                bannerTypename:null,
+                nickName:null,
+                phone:null
+            };
+            param[key] = value;
+            console.log(param);
+            table.reload('banner-type-table', {where:param});
+        });
+
+        // 修改bannerType状态
+        form.on('switch(banner-type-tpl-state)', function (obj) {
+            layer.load(2);
+            $.post('banner/bannerType/updateState', {
+                bannerTypeId: obj.elem.value,
+                state: obj.elem.checked ? 0 : 1
+            }, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    //table.reload('table-bannerType', {});
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            });
+        });
+    });
+</script>

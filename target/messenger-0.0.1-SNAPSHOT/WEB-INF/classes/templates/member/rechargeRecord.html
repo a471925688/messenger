@@ -1,0 +1,70 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">充值記錄</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>充值記錄</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            賬號：
+            <input id="rechargeRecord-edt-account" class="layui-input search-input" type="text" placeholder="请输入賬號"/>&emsp;
+            日期：
+            <input id="rechargeRecord-edt-date" class="layui-input search-input date-icon" type="text" placeholder="請選擇日期範圍"
+                   style="width: 195px;"/>&emsp;
+            <button id="rechargeRecord-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+        </div>
+
+        <table class="layui-table" id="rechargeRecord-table" lay-filter="rechargeRecord-table"></table>
+    </div>
+</div>
+
+<script>
+    layui.use(['laydate', 'table', 'util'], function () {
+        var laydate = layui.laydate;
+        var table = layui.table;
+        var util = layui.util;
+
+        // 渲染表格
+        table.render({
+            elem: '#rechargeRecord-table',
+            url: 'member/tokenMoney/list',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'username', title: '充值賬號'},
+                {field: 'rechargeAmount', title: '充值數量'},
+                {field: 'rechargeModeStr', title: '充值方式'},
+                {field: 'operatorname', title: '操作員'},
+                {field: 'rechargeComments', title: '備註'},
+                {
+                    field: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '充值時間'
+                }
+            ]]
+        });
+
+        // 时间范围
+        laydate.render({
+            elem: '#rechargeRecord-edt-date',
+            type: 'date',
+            range: true,
+            theme: 'molv'
+        });
+
+        // 搜索按钮点击事件
+        $('#rechargeRecord-btn-search').click(function () {
+            var searchDate = $('#rechargeRecord-edt-date').val().split(' - ');
+            var searchAccount = $('#rechargeRecord-edt-account').val();
+            table.reload('rechargeRecord-table', {
+                where: {
+                    startDate: searchDate[0],
+                    endDate: searchDate[1],
+                    username: searchAccount
+                }
+            });
+        });
+    });
+</script>

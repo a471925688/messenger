@@ -1,0 +1,210 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">已完成列表</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首頁</a>
+          <a><cite>已完成列表</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            用戶：
+            <input id="order_completed-edt-account" class="layui-input search-input" type="text" placeholder="請輸入賬號"/>&emsp;
+            訂單號：
+            <input id="order_completed-edt-no" class="layui-input search-input" type="text" placeholder="請輸入訂單號"/>&emsp;
+            收貨地區：
+            <div class="layui-input-inline" style="min-width: 340px;margin-right: 8px;">
+                <select name="order_completed-edt-place"   xm-select-radio  xm-select="order_completed-edt-place" lay-verify="required"></select>
+            </div>
+            日期：
+            <input id="order_completed-edt-date" class="layui-input search-input date-icon" type="text" placeholder="請選擇日期範圍"
+                   style="width: 195px;"/>&emsp;
+            <button id="order_completed-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+<!--            <button id="order_completed-btn-add" class="layui-btn icon-btn"><i-->
+<!--                    class="layui-icon">&#xe654;</i>添加-->
+<!--            </button>-->
+        </div>
+
+        <table class="layui-table" id="order_completed-table" lay-filter="order_completed-table"></table>
+    </div>
+</div>
+<!-- 表格工具列 -->
+<script type="text/html" id="order_completed-table-toolbar">
+    <a class="layui-btn" lay-event="add_locus_all">添加軌跡</a>
+</script>
+<!-- 表格操作列 -->
+<script type="text/html" id="order_completed-table-bar">
+    <a class="layui-btn  layui-btn-xs" lay-event="add_locus">添加軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="see">查看軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="message">留言
+        {{#  if(d.memberRepliesNum > 0){ }}
+        <div class="radius-info">{{d.memberRepliesNum}}</div>
+        {{#  } else { }}
+
+        {{#  } }}
+    </a>
+    <!--    <a class="layui-btn  layui-btn-xs" lay-event="appointment">预约</a>-->
+</script>
+<script>
+    layui.use(['laydate', 'table', 'util', 'admin','formSelects'], function () {
+        var laydate = layui.laydate;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        var formSelects = layui.formSelects;
+        formSelects.data('order_completed-edt-place', 'server', {
+            url: "place/place/ztreeList.do",
+            linkage: true,
+            linkageWidth: 130
+        });
+
+        // 渲染表格
+        table.render({
+            elem: '#order_completed-table',
+            url: 'order/order/list_completed',
+            page: true,
+            toolbar: '#order_completed-table-toolbar', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cellMinWidth:80,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'username', title: '用戶名'},
+                {field: 'orderNo', title: '快遞單號'},
+                // {field: 'operatorname', title: '操作员'},
+                {field: 'recId', title: '地址標示'},
+                {field: 'goodsType', title: '類型'},
+                {field: 'goodsWeight', title: '重量'},
+                {field: 'goodsVolume', title: '體積'},
+                {field: 'orderTokenMoney', title: '運費'},
+                {
+                    field: 'pickUpStationId', title: '收件地址', templet: function (d) {
+                        return d.receAddres.pickUpStationId?d.receAddres.pickUpStation.pickUpStationName+"自提":d.receAddres.place.details+'-'+d.receAddres.recDetailedAddr;
+                    }
+                },
+                // {field: 'orderAppointment', title: '预约时间',sort:true, templet: function (d) {
+                //         return d.orderAppointment?d.orderAppointment:"<span style='color: #4CAF50'>未预约</span>";
+                //     }
+                // },
+                // {field: 'pickUpCode', title: '提货码'},
+                {
+                    field: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '創建時間'
+                },
+                {align: 'center',minWidth:270, toolbar: '#order_completed-table-bar', title: '操作'}
+            ]]
+        });
+        table.on('toolbar(order_completed-table)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id)
+                ,data = checkStatus.data; //获取选中的数据
+            switch(obj.event) {
+                case 'add_locus_all':
+                    if (data.length === 0) {
+                        layer.msg('請至少選擇一行');
+                    } else {
+                        var orderIds = [];
+                        for (var i = 0; i < data.length; i++) {
+                            orderIds.push(data[i].orderId)
+                        }
+                        showAddLocusModel(orderIds);
+                    }
+                    break;
+            }
+        });
+
+        // 工具条点击事件
+        table.on('tool(order_completed-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            switch (layEvent) {
+                case 'add_locus':{
+                    var orderIds = [];
+                    orderIds.push(data.orderId);
+                    showAddLocusModel(orderIds);
+                    break;
+                }
+                case 'see':{
+                    admin.putTempData('t_orderRecord', data.orderId);
+                    admin.popupCenter({
+                        area:'650px',
+                        title: "物流信息",
+                        path: 'order/orderRecord?orderId='+data.orderId,
+                        finish: function () {
+
+                        }
+                    });
+                    break;
+                }
+                case 'message':
+                    var user = {
+                        nickName:$("#userNickName").text(),
+                        avatar:$("#userAvatar").attr("src"),
+                    }
+                    card.open(data,user);
+                    console.log(  obj.tr.find(".radius-info").remove())
+                    break;
+            }
+        });
+
+        // 添加按钮点击事件
+        $('#order_completed-btn-add').click(function () {
+            showEditModel();
+        });
+
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = '包裹入庫';
+            admin.putTempData('t_order_completed', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/order/editForm',
+                finish: function () {
+                    table.reload('order_completed-table', {});
+                }
+            });
+        };
+
+        // 显示表单弹窗
+        var showAddLocusModel = function (data) {
+            var title = '添加軌跡';
+            admin.putTempData('t_order_locus', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/orderRecord/locusForm',
+                finish: function () {
+                    table.reload('order_completed-table', {});
+                }
+            });
+        };
+
+
+
+
+        // 时间范围
+        laydate.render({
+            elem: '#order_completed-edt-date',
+            type: 'date',
+            range: true,
+            theme: 'molv'
+        });
+
+        // 搜索按钮点击事件
+        $('#order_completed-btn-search').click(function () {
+            var searchDate = $('#order_completed-edt-date').val().split(' - ');
+            var username = $('#order_completed-edt-account').val();
+            var orderNo = $('#order_completed-edt-no').val();
+            var placeIds = formSelects.value('order_completed-edt-place', 'val');
+            var param = {
+                startDate: searchDate[0],
+                endDate: searchDate[1],
+                username: username,
+                placeId:  placeIds.length?placeIds[0]:'',
+                orderNo:orderNo
+            }
+            console.log(param);
+            table.reload('order_completed-table', {
+                where:param
+            });
+        });
+    });
+</script>

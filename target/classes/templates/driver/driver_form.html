@@ -1,0 +1,84 @@
+<!-- user表单弹窗 -->
+<form id="driver-form" lay-filter="driver-form" class="layui-form model-form">
+    <input name="userId" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">賬號</label>
+        <div class="layui-input-inline">
+            <input name="username" placeholder="请输入賬號" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input name="nickName" placeholder="请输入姓名" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">性別</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="sex" value="男" title="男" checked/>
+            <input type="radio" name="sex" value="女" title="女"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">手機號</label>
+        <div>
+            <div class="layui-input-inline" style="width: 80px" >
+                <select name="areaCode">
+                    <option value="010">澳門</option>
+                    <option value="86">中國大陸</option>
+                    <option value="0571">香港</option>
+                </select>
+            </div>
+            <div class="layui-form-mid">-</div>
+        </div>
+        <div class="layui-input-inline" style="width: 150px">
+            <input name="phone" placeholder="请输入手機號" type="text" class="layui-input" lay-verify="required|phone"
+                   required/>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="driver-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var formSelects = layui.formSelects;
+
+        form.render();
+
+        var url = 'driver/driver/add';
+        // 回显user数据
+        var user = admin.getTempData('t_driver');
+        if (user) {
+            $('input[name="username"]').attr('readonly', 'readonly');
+            url = 'driver/driver/edit';
+            form.val('driver-form', user);
+            // $("select[name='areaCode']")
+        }
+
+        // 表单提交事件
+        form.on('submit(driver-form-submit)', function (data) {
+            layer.load(2);
+            $.post(url, data.field, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

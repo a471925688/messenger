@@ -1,0 +1,137 @@
+.order_card{
+    z-index: 19891016;
+    width: 600px;
+    top: 90px;
+    left: 222px;
+    min-width: 500px;
+    min-height: 420px;
+    background-image: url(https://res.layui.com/layui/dist/css/modules/layim/skin/3.jpg);
+    background-color: #fff;
+    background-size: cover;
+    border: 1px solid #D9D9D9;
+    border-color: rgba(0,0,0,.05);
+    background-repeat: no-repeat;
+    color: #333;
+    font-family: \5FAE\8F6F\96C5\9ED1;
+    border-radius: 2px;
+    box-shadow: 1px 1px 50px rgba(0,0,0,.3);
+    display: block;
+    line-height: 24px;
+    font: 14px Helvetica Neue,Helvetica,PingFang SC,Tahoma,Arial,sans-serif;
+    position: absolute;
+}
+.order_card ul li{
+    margin-bottom: 26px;
+}
+.card-title{
+    height: 80px;
+    border-bottom: none;
+    background-color: #F8F8F8;
+    background-color: rgba(245,245,245,.7);
+}
+.card-body{
+    height: 500px;
+}
+.card-body-main {
+    background-color: white;
+    height: 67%;
+    padding: 10px 10px 10px 10px;
+    overflow: scroll;
+    overflow-x: auto;
+}
+.card-body_send_div_info{
+    background-color: white;
+    height: 19%;
+    border-top: 1px solid #F1F1F1;
+    padding-left: 10px;
+}
+.card-body_send_div{
+    height: 46px;
+}
+.card-body_send_div_btn{
+    float: right;
+    margin: 0 5px;
+    margin: 10px;
+}
+.card-body_send_div_info .card_textarea{
+    display: block;
+    width: 100%;
+    padding: 5px 0 0;
+    height: 94px;
+    line-height: 20px;
+    border: none;
+    overflow: auto;
+    resize: none;
+    background: 0 0;
+}
+.card-body-main-text-content{
+    text-align: left;
+    background-color: #5FB878;
+    color: #fff;
+    position: relative;
+    line-height: 22px;
+    margin: 15px 25px 0px 25px;
+    padding: 8px 15px;
+    border-radius: 3px;
+    word-break: break-all;
+    vertical-align: top;
+    font-size: 14px;
+    display: inline-block;
+    box-sizing: content-box;
+    min-height: 22px;
+}
+.card-body-main-text{
+    width: 92%;
+    margin-left: 0;
+    color: #fff;
+    position: relative;
+    border-radius: 3px;
+    word-break: break-all;
+    vertical-align: top;
+    font-size: 14px;
+    display: inline-block;
+    box-sizing: content-box;
+}
+.card-body-main-text-background-color{
+    background-color: #ccc;
+    border-color: #ccc transparent transparent;
+}
+.card-body-main-text-background-color .card-body-main-text-triangle{
+    border-color: #ccc transparent transparent;
+}
+.card-body-main-text-triangle{
+    left: auto;
+    right: -10px;
+    content: '';
+    position: absolute;
+    top: 13px;
+    width: 0;
+    height: 0;
+    border-style: solid dashed dashed;
+    border-color: #5FB878 transparent transparent;
+    overflow: hidden;
+    border-width: 10px;
+}
+.card-body-main-text-triangle-left{
+    left: -10px;
+}
+.card-body-main-header-img{
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    float: left;;
+}
+
+cite{
+    margin-left: 21px;
+}
+cite i{
+    margin: 0px 17px;
+}
+.float-right{
+    float: right;
+}
+cite.right{
+    float: right;
+    margin-right: 32px;
+}

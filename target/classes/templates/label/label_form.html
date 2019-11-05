@@ -1,0 +1,46 @@
+<!-- user表单弹窗 -->
+<form id="labelSocket-form" lay-filter="labelSocket-form" class="layui-form model-form">
+    <input name="labelSocketId" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <textarea name="remarks" placeholder="请输入备注信息" class="layui-textarea" maxlength="200"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="labelSocket-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form',], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+
+        var url = 'label/label/add';
+        // 回显user数据
+        var user = admin.getTempData('t_labelSocket');
+        if (user) {
+            url = 'label/label/edit';
+            form.val('labelSocket-form', user);
+            var rds = new Array();
+        }
+
+        // 表单提交事件
+        form.on('submit(labelSocket-form-submit)', function (data) {
+            layer.load(2);
+            $.post(url, data.field, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

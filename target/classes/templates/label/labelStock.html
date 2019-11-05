@@ -1,0 +1,147 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">未出庫袋子</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>未出庫袋子</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            袋號：
+<!--            <select id="labelStock-search-key">-->
+<!--                <option value="">-请选择-</option>-->
+<!--                <option value="userId">ID</option>-->
+<!--                <option value="username">账号</option>-->
+<!--                <option value="nickName">袋子名</option>-->
+<!--                <option value="phone">手机号</option>-->
+<!--            </select>&emsp;-->
+            <input id="labelStock-search-no" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="labelStock-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="labelStock-btn-add" class="layui-btn icon-btn" ><i
+                    class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+
+        <table class="layui-table" id="labelStock-table" lay-filter="labelStock-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="labelStock-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="print">打印</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="send">出庫</a>
+<!--    <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>-->
+</script>
+
+
+<script>
+    WebSocketUtil.init({openUrl:'ws://127.0.0.1:50000/',eroorMsg:'打印未开启'});
+
+    layui.use(['form', 'table', 'util', 'admin', 'element'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+
+        form.render('select');
+
+        // 渲染表格
+        table.render({
+            elem: '#labelStock-table',
+            url: 'label/label/list_stock',
+            page: true,
+            cols: [[
+                {type: 'numbers'},
+                {field: 'no', sort: true, title: '袋號'},
+                {field: 'remarks', sort: true, title: '备注'},
+                {
+                    sort: true, templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                {align: 'center',toolbar: '#labelStock-table-bar', title: '操作'}
+            ]]
+        });
+
+        // 添加按钮点击事件
+        $('#labelStock-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 工具条点击事件
+        table.on('tool(labelStock-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            switch (layEvent) {
+                case 'edit':{
+                    showEditModel(data);
+                    break;
+                }
+                case 'print':{
+                    WebSocketUtil.send(data.no);
+                    layer.msg('操作成功', {icon: 1});
+                    break;
+                }
+                case 'send':{
+                    showSendModel(data.no);
+                    break;
+                }
+                // case 'del':{
+                //     layer.confirm('確定刪除該袋子嗎？', function (i) {
+                //         layer.close(i);
+                //         layer.load(2);
+                //         $.post('label/label/del', {
+                //             id: obj.data.no
+                //         }, function (data) {
+                //             layer.closeAll('loading');
+                //             if (!data.code) {
+                //                 table.reload('labelStock-table', {});
+                //                 layer.msg(data.msg, {icon: 1});
+                //             } else {
+                //                 layer.msg(data.msg, {icon: 2});
+                //             }
+                //         });
+                //     });
+                //     break;
+                // }
+            }
+        });
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = data ? '修改袋子' : '添加袋子';
+            admin.putTempData('t_labelStock', data);
+            admin.popupCenter({
+                title: title,
+                path: 'label/label/editForm',
+                finish: function () {
+                    table.reload('labelStock-table', {});
+                }
+            });
+        };
+        // 显示出庫表单弹窗
+        var showSendModel = function (data) {
+            var title = '袋子(訂單)出庫';
+            admin.putTempData('t_label_send', data);
+            admin.popupCenter({
+                title: title,
+                path: 'label/label/sendForm',
+                finish: function () {
+                    table.reload('labelStock-table', {});
+                }
+            });
+        };
+        // 搜索按钮点击事件
+        $('#labelStock-btn-search').click(function () {
+            var no = $('#labelStock-search-no').val();
+            var param = {
+                no:no
+            }
+            table.reload('labelStock-table', {where:param});
+        });
+
+    });
+</script>

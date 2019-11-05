@@ -1,0 +1,233 @@
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                用户<span class="layui-badge layui-bg-blue pull-right">月</span>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="cur_user_num">${newUser}</p>
+                <p>总用戶<span class="pull-right">${allUser} <i class="layui-icon layui-icon-user"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                訂單<span class="layui-badge layui-bg-black pull-right">月</span>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="cur_order_num">${newOrder}</p>
+                <p>總訂單<span class="pull-right">${allOrder} <i class="layui-icon layui-icon-menu-fill"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                交易額<span class="layui-badge layui-bg-green pull-right" >月</span>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font" id="active_user">${newAmount}</p>
+                <p>总交易額<span class="pull-right">${allAmount} <i class="layui-icon layui-icon-dollar"></i></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs6 layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                活跃用户<span class="layui-badge layui-bg-orange pull-right">月</span>
+            </div>
+            <div class="layui-card-body">
+                <p class="lay-big-font">${activeUser}</p>
+                <p>最近一个月<span class="pull-right">${activeUserAatio}% <i class="layui-icon layui-icon-user"></i></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-lg8 layui-col-md7">
+        <div class="layui-card">
+            <div class="layui-card-header">订单统计</div>
+            <div class="layui-card-body">
+<!--                <ul class="layui-timeline">-->
+<!--                    <li class="layui-timeline-item">-->
+<!--                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>-->
+<!--                        <div class="layui-timeline-content layui-text">-->
+<!--                            <h3 class="layui-timeline-title">V2.0-->
+<!--                                <small>发布全新版本</small>&emsp;<span class="layui-badge-rim">2018-06-28</span>-->
+<!--                            </h3>-->
+<!--                            <ul>-->
+<!--                                <li>使用IDEA、SpringBoot、SpringSecurity、OAuth2重构后台部分</li>-->
+<!--                                <li>前端引入pandyle.js，填补layui模板引擎的短板</li>-->
+<!--                                <li>前端采用模块化开发方式，定义admin、config等公用模块，封装ajax请求</li>-->
+<!--                                <li>界面优化，借鉴layadmin的设计风格，改版登录页面</li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="layui-timeline-item">-->
+<!--                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>-->
+<!--                        <div class="layui-timeline-content layui-text">-->
+<!--                            <h3 class="layui-timeline-title">V1.1&emsp;<span class="layui-badge-rim">2018-02-11</span>-->
+<!--                            </h3>-->
+<!--                            <ul>-->
+<!--                                <li>加入侧导航栏折叠效果，并且自适应移动端展示，移动端与PC端的折叠效果完全不同</li>-->
+<!--                                <li>加入gif图形验证码功能</li>-->
+<!--                                <li>完成EasyWeb的Readme介绍文档和JWTPermission的开发文档的编写</li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="layui-timeline-item">-->
+<!--                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>-->
+<!--                        <div class="layui-timeline-content layui-text">-->
+<!--                            <h3 class="layui-timeline-title">V1.0&emsp;<span class="layui-badge-rim">2018-01-26</span>-->
+<!--                            </h3>-->
+<!--                            <ul>-->
+<!--                                <li>引入q.js作为前端页面的路由框架</li>-->
+<!--                                <li>完成了第一个基于基于jquery的前后端分离框架，适用于对vue、react等框架了解不深的广大后端程序员</li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="layui-timeline-item">-->
+<!--                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>-->
+<!--                        <div class="layui-timeline-content layui-text">-->
+<!--                            <h3 class="layui-timeline-title">V0.1&emsp;<span class="layui-badge-rim">2018-01-02</span>-->
+<!--                            </h3>-->
+<!--                            <ul>-->
+<!--                                <li>将公司原本基于shiro的平台改造成前后端分离模式</li>-->
+<!--                                <li>去除Shiro，基于jjwt自主设计出JwtPermission框架，完成对Shiro的替代</li>-->
+<!--                                <li>去除AdminLTE框架，使用layui框架重新改造</li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                    <li class="layui-timeline-item">-->
+<!--                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>-->
+<!--                        <div class="layui-timeline-content layui-text">-->
+<!--                            <div class="layui-timeline-title">-->
+<!--                                EasyWeb默默开发中...&emsp;<span class="layui-badge-rim">更早</span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                </ul>-->
+                    <div> <canvas id="lineChart" ></canvas></div>
+
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-lg4 layui-col-md4">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <table  lay-skin="nob" lay-size="lg" class="layui-table">
+                    <colgroup>
+                        <col width="50">
+                        <col>
+                        <col width="96">
+                    </colgroup>
+                    <thead>
+                    <tr style="background: none;color: #333;">
+                        <th colspan="3">中轉站訂單排名</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody_tr">
+
+<!--                    <tr>-->
+<!--                        <td><span class="layui-badge layui-bg-cyan">1</span></td>-->
+<!--                        <td>-->
+<!--                            路氹提貨點</td>-->
+<!--                        <td>212</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td><span class="layui-badge layui-bg-cyan">2</span></td>-->
+<!--                        <td>氹仔提貨點</td>-->
+<!--                        <td>100</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td><span class="layui-badge layui-bg-cyan">3</span></td>-->
+<!--                        <td>市中心提貨點</td>-->
+<!--                        <td>80</td>-->
+<!--                    </tr>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="tbody_tr_html" type="text/html">
+    {{#  layui.each(d, function(index, item){ }}
+        <tr>
+            {{#  if(index<4){ }}
+            <td><span class="layui-badge layui-bg-cyan">{{index+1}}</span></td>
+            {{#  } else { }}
+            <td><span class="layui-badge">{{index}}</span></td>
+            {{#  } }}
+            <td>{{item[0]}}</td>
+            <td>{{item[1]}}</td>
+        </tr>
+    {{#  }); }}
+</script>
+<script>
+
+    layui.use(['carousel','table', 'element','admin','laytpl'], function () {
+        var carousel = layui.carousel;
+        var table = layui.table;
+        var element = layui.element;
+        var device = layui.device;
+        var admin = layui.admin;
+        var laytpl = layui.laytpl
+        layui.link('assets/css/console.css');
+
+
+        // 渲染轮播
+        carousel.render({
+            elem: '.layui-carousel',
+            width: '100%',
+            height: '60px',
+            arrow: 'none',
+            autoplay: true,
+            trigger: device.ios || device.android ? 'click' : 'hover',
+            anim: 'fade'
+        });
+
+        admin.req("home/consoleData.do",{},function (obj) {
+            console.log(obj)
+            var lineData = {
+                labels: ["一月", "二月", "三月", "四月", "五月", "六月", "七月","八月","九月","十月","十一月","十二月"],
+                datasets: [
+                    {
+                        label: "示例数据",
+                        fillColor: "rgba(26,179,148,0.5)",
+                        strokeColor: "rgba(26,179,148,0.7)",
+                        pointColor: "rgba(26,179,148,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(26,179,148,1)",
+                        data: obj.mouth
+                    }
+                ]
+            };
+            var lineOptions = {
+                // scaleShowGridLines: true,
+                // scaleGridLineColor: "rgba(0,0,0,.05)",
+                // scaleGridLineWidth: 1,
+                // bezierCurve: true,
+                // bezierCurveTension: 0.4,
+                // pointDot: true,
+                // pointDotRadius: 4,
+                // pointDotStrokeWidth: 1,
+                // pointHitDetectionRadius: 20,
+                // datasetStroke: true,
+                // datasetStrokeWidth: 2,
+                // datasetFill: true,
+                responsive: true,
+            };
+            var ctx = document.getElementById("lineChart").getContext("2d");
+            var myNewChart = new Chart(ctx).Bar(lineData, lineOptions);
+
+            laytpl($("#tbody_tr_html").html()).render(obj.station, function(html){
+                $("#tbody_tr").html(html)
+            });
+
+        })
+
+    });
+</script>

@@ -1,0 +1,47 @@
+<!-- user表单弹窗 -->
+<form id="order-deliver-form" lay-filter="order-deliver-form" class="layui-form model-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">派送員</label>
+        <div class="layui-input-inline" >
+<!--            <input type="text" name="" placeholder="请输入" autocomplete="off" class="layui-input" id="delivers">-->
+            <select name="dispatcherId" xm-select="delivers" xm-select-radio  xm-select-search="" xm-select-search-type="dl" lay-verify="required">
+                <% for(deliver in delivers) { %>
+                <option value="${deliver.user.userId}">${deliver.user.nickName}</option>
+                <% } %>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="order-deliver-form-submit" lay-submit>保存</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form','formSelects'], function () {
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        var url = 'order/order/deliver';
+        var orderIds = admin.getTempData('t_order_deliver');
+        // 表单提交事件
+        form.on('submit(order-deliver-form-submit)', function (data) {
+            var param = data.field;
+            layer.load(2);
+            param.orderIds = orderIds;
+            console.log(param)
+            $.post(url, param, function (data) {
+                layer.closeAll('loading');
+                if (!data.code) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

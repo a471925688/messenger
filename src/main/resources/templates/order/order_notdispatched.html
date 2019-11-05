@@ -1,0 +1,230 @@
+<div class="layui-card animated fadeInUp">
+    <div class="layui-card-header">
+        <h2 class="header-title">訂單列表</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首頁</a>
+          <a><cite>待派送列表</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            用戶：
+            <input id="order_notdispatched-edt-account" class="layui-input search-input" type="text" placeholder="請輸入暱稱"/>&emsp;
+            日期：
+            <input id="order_notdispatched-edt-date" class="layui-input search-input date-icon" type="text" placeholder="請選擇日期範圍"
+                   style="width: 195px;"/>&emsp;
+            <button id="order_notdispatched-btn-search" class="layui-btn icon-btn"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <!--<button id="order_notdispatched-btn-add" class="layui-btn icon-btn"><i-->
+                    <!--class="layui-icon">&#xe654;</i>添加-->
+            <!--</button>-->
+        </div>
+
+        <table class="layui-table" id="order_notdispatched-table" lay-filter="order_notdispatched-table"></table>
+    </div>
+</div>
+<!-- 表格工具列 -->
+<script type="text/html" id="order_notdispatched-table-toolbar">
+    <a class="layui-btn" lay-event="add_locus_all">添加軌跡</a>
+    <a class="layui-btn" lay-event="deliver_all">添加軌跡</a>
+</script>
+<!-- 表格操作列 -->
+<script type="text/html" id="order_notdispatched-table-bar">
+    <a class="layui-btn  layui-btn-xs" lay-event="add_locus">添加軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="see">查看軌跡</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="deliver">派送</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="appointment">預約</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="message">留言
+        {{#  if(d.memberRepliesNum > 0){ }}
+        <div class="radius-info">{{d.memberRepliesNum}}</div>
+        {{#  } else { }}
+
+        {{#  } }}
+    </a>
+</script>
+<script>
+    layui.use(['laydate', 'table', 'util', 'admin'], function () {
+        var laydate = layui.laydate;
+        var table = layui.table;
+        var util = layui.util;
+        var admin = layui.admin;
+        // 渲染表格
+        table.render({
+            elem: '#order_notdispatched-table',
+            url: 'order/order/list_notdispatched',
+            page: true,
+            toolbar: '#order_notdispatched-table-toolbar', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            cellMinWidth:80,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'username', title: '用戶'},
+                {field: 'orderNo', title: '快遞單號'},
+                // {field: 'operatorname', title: '操作员'},
+                // {field: 'recId', title: '地址'},
+                {field: 'goodsType', title: '類型'},
+                {field: 'goodsWeight', title: '重量'},
+                {field: 'goodsVolume', title: '體積'},
+                {field: 'orderTokenMoney', title: '运運費费'},
+                // {
+                //     field: 'pickUpStationId', title: '目的地', templet: function (d) {
+                //         return d.receAddres.pickUpStationId?d.receAddres.pickUpStation.pickUpStationName:"";
+                //     }
+                // },
+                {
+                    field: 'pickUpStationId', title: '收件地址', templet: function (d) {
+                        return d.receAddres.pickUpStationId?d.receAddres.pickUpStation.pickUpStationName+"自提":d.receAddres.place.details+'-'+d.receAddres.recDetailedAddr;
+                    }
+                },
+                {field: 'orderAppointment', title: '預約時間', templet: function (d) {
+                        return d.orderAppointment?d.orderAppointment:"<span style='color: #4CAF50'>未预约</span>";
+                    }
+                },
+                {field: 'pickUpCode', title: '提貨碼'},
+                {
+                    field: 'createTime', templet: function (d) {
+                        return util.toDateString(d.createTime);
+                    }, title: '创建时间'
+                },
+                {align: 'center',minWidth:320, toolbar: '#order_notdispatched-table-bar', title: '操作'}
+            ]]
+        });
+        table.on('toolbar(order_notdispatched-table)', function (obj) {
+            console.log("触发了")
+            var checkStatus = table.checkStatus(obj.config.id)
+                ,data = checkStatus.data; //获取选中的数据
+            switch(obj.event){
+                case 'add_locus_all':
+                    if(data.length === 0){
+                        layer.msg('请至少选择一行');
+                    } else {
+                        var orderIds = [];
+                        for(var i = 0;i<data.length;i++){
+                            orderIds.push(data[i].orderId)
+                        }
+                        showAddLocusModel(orderIds);
+                    }
+                    break;
+                case 'deliver_all':
+                    if(data.length === 0){
+                        layer.msg('请至少选择一行');
+                    } else {
+                        var orderIds = [];
+                        for(var i = 0;i<data.length;i++){
+                            orderIds.push(data[i].orderId)
+                        }
+                        showDeliverModel(orderIds);
+                    }
+                    break;
+
+
+            };
+        });
+
+        // 工具条点击事件
+        table.on('tool(order_notdispatched-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            console.log("点击了")
+            switch (layEvent) {
+                case 'edit':{
+                    showEditModel(data);
+                    break;
+                }
+                case 'add_locus':{
+                    var orderIds = [];
+                    orderIds.push(data.orderId);
+                    showAddLocusModel(orderIds);
+                    break;
+                }
+                case 'appointment':{
+                    showAppointmentModel(data);
+                    break;
+                }
+                case 'deliver':
+                    var orderIds = [data.orderId];
+                    showDeliverModel(orderIds);
+                    break;
+                case 'see':{
+                    admin.putTempData('t_orderRecord', data.orderId);
+                    admin.popupCenter({
+                        area:'650px',
+                        title: "物流信息",
+                        path: 'order/orderRecord?orderId='+data.orderId,
+                        finish: function () {
+
+                        }
+                    });
+                    break;
+                }
+                case 'message':
+                    var user = {
+                        nickName:$("#userNickName").text(),
+                        avatar:$("#userAvatar").attr("src"),
+                    }
+                    card.open(data,user);
+                    console.log(  obj.tr.find(".radius-info").remove())
+                    break;
+            }
+        });
+        // 显示表单弹窗
+        var showAddLocusModel = function (data) {
+            var title = '添加軌跡';
+            admin.putTempData('t_order_locus', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/orderRecord/locusForm',
+                finish: function () {
+                    table.reload('order_notdispatched-table', {});
+                }
+            });
+        };
+
+        // 显示派送弹窗
+        var showDeliverModel = function (data) {
+            var title = '選擇派送員';
+            admin.putTempData('t_order_deliver', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/order/deliverForm?orderId='+data[0],
+                // area:'840px',
+                finish: function () {
+                    table.reload('order_notdispatched-table', {});
+                }
+            });
+        };
+
+        // 显示預約表单弹窗
+        var showAppointmentModel = function (data) {
+            var title = '預約派送';
+            admin.putTempData('t_order_appointment', data);
+            admin.popupCenter({
+                title: title,
+                path: 'order/order/orderAppointment',
+                finish: function () {
+                    table.reload('order_notdispatched-table', {});
+                }
+            });
+        };
+
+
+        // 时间范围
+        laydate.render({
+            elem: '#order_notdispatched-edt-date',
+            type: 'date',
+            range: true,
+            theme: 'molv'
+        });
+
+        // 搜索按钮点击事件
+        $('#order_notdispatched-btn-search').click(function () {
+            var searchDate = $('#order_notdispatched-edt-date').val().split(' - ');
+            var searchAccount = $('#order_notdispatched-edt-account').val();
+            table.reload('order_notdispatched-table', {
+                where: {
+                    startDate: searchDate[0],
+                    endDate: searchDate[1],
+                    username: searchAccount
+                }
+            });
+        });
+    });
+</script>
